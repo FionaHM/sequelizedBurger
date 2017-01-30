@@ -1,0 +1,50 @@
+ul {
+	margin: auto;
+}
+h2 {
+	margin: 30px auto 30px auto;
+}
+p {
+	margin: auto 0 0 10px;
+    display: inline-block;
+  
+}
+.btn-warning {
+    color: #fff;
+    background-color: #399B52;
+    border-color: #399B52;
+}
+.panel-default{
+	min-height: 300px;
+	background-color: #FBD133;
+	margin: auto;
+}
+.panel-devoured {
+	min-height: 300px;
+	background-color: #8C9E36;
+	margin: auto;
+}
+.row {
+	margin: auto;
+	padding-bottom: 50px;
+}
+.burger-list-items {
+	margin: auto;
+	padding-right: 10%;
+	min-width: 75%;
+
+}
+#devour, #delete {
+    margin: 10px auto;
+    display: inline-block;
+    min-width: 100px;
+}
+#submit-form {
+	min-height: 100px;    
+}
+#submit-button {
+	margin-top: 10px;    
+}
+#burger-input {
+	width: 300px;
+}

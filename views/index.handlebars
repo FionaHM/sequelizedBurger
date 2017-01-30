@@ -1,0 +1,80 @@
+<div class="container">
+ 	<div class="jumbotron text-center">
+		<h1>Burger Bar</h1>
+		<hr>
+		<p>Welcome! Please add any burger you wish to eat then devour it!</p>
+	</div>
+	<div class="row">
+		<div class="col-md-3">
+		</div>
+		<div class="col-md-6 text-center">
+			<img src="./assets/img/burger.png">
+		</div>
+		<div class="col-md-3">
+		</div>
+	</div>
+<!-- end of header -->
+<!-- display burgers -->
+	<div class="row">
+		<div class="col-xs-12 col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h2 class="text-center">Burgers Available</h2>
+					<ul>
+						<!-- uses a flag passed from the controller to check if the list is empty -->
+						{{#if noBurgers }}
+							<p class="text-center">Sorry no burgers to devour!</p>
+						{{/if}}
+					  	{{#each burgers}}
+						    <li>
+						    	<!-- updating the devoured field so this is a put action -->
+					       		<form action="/{{this.id}}?_method=PUT" method="POST">
+				       				<p class="burger-list-items"><strong># {{this.id}}</strong>  | {{this.burger_name}}</p>
+					        		<button class="btn btn-warning"  id="devour" type="submit">Devour it!</button>
+					        	</form>
+						    </li>
+						{{/each}}
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-12 col-md-6">
+			<div class="panel panel-devoured">
+				<div class="panel-body">
+					<h2 class="text-center">Burgers Devoured</h2>
+					<ul>		
+						<!-- uses a flag passed from the controller to check if the list is empty -->
+						{{#if noDevoured }}
+							<p class="center">No burgers have been devoured!</p>
+						{{/if}}
+						{{#each devoured}}
+						    <li>
+						    	<!-- removing from database so this is a delete action -->
+						        <form action="/{{this.id}}?_method=DELETE" method="POST">
+					       			<p class="burger-list-items"><strong># {{this.id}}</strong>  | {{this.burger_name}}</p>
+					        		<button class="btn btn-danger"  id="delete" type="submit">Remove</button>
+						        </form>
+						    </li>
+						{{/each}}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end of display burgers -->
+	<!-- add new burger -->
+	<div class="row text-center">
+		<div class="col-md-4"></div>
+		<div class="col-md-4">		
+			<h2 class="text-center">Add a Burger</h2>
+			<p>Please add a burger of your choice!</p>
+			<form method="POST" action="/" id="submit-form" class="text-center">
+				<input id="burger-input" type="text" name="burgername" maxlength="32"></textarea>
+				<button class="btn btn-info" type="submit" id="submit-button">Add Burger</button><br>
+			</form>
+		</div>
+		<div class="col-md-4"></div>
+	</div>
+	<!-- end of add new burger -->
+</div>  <!-- end of container	-->
+
