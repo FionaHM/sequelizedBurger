@@ -1,26 +1,13 @@
 module.exports = function(sequelize, DataTypes){
-	var Burger = sequelize.define("Burger", {
+	var Customer = sequelize.define("Customer", {
 		id: {
 			type: DataTypes.INTEGER,
 			autoIncrement: true,
 			primaryKey: true,
 			allowNull: false
 		},
-		burger_name: {
+		customer_name: {
 			type: DataTypes.STRING,
-			allowNull: false
-		},
-		devoured: {
-			type: DataTypes.BOOLEAN,
-			allowNull: false,
-			defaultValue: 0
-		},
-		customer_id: {
-			type: DataTypes.INTEGER,
-			allowNull: true
-		},
-		who_devoured_id: {
-			type: DataTypes.INTEGER,
 			allowNull: false
 		},
 		created_at: {
@@ -37,11 +24,10 @@ module.exports = function(sequelize, DataTypes){
     	underscored: true
   	},{
   		timestamps: false
-	})
-
+	} )
 	// Syncs with DB
-	Burger.sync();
+	Customer.sync();
 
-	return Burger;
+	return Customer;
 };
 

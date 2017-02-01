@@ -9,6 +9,9 @@ p {
     display: inline-block;
   
 }
+input {
+	margin: 10px;
+}
 .btn-warning {
     color: #fff;
     background-color: #399B52;
@@ -34,17 +37,25 @@ p {
 	min-width: 75%;
 
 }
+.input-form {
+	display: block;
+}
+.form-input-title {
+    min-width: 100px;
+    display: inline-block;;
+}
 #devour, #delete {
     margin: 10px auto;
     display: inline-block;
     min-width: 100px;
 }
 #submit-form {
-	min-height: 100px;    
+	min-height: 100px;   
+
 }
 #submit-button {
 	margin-top: 10px;    
 }
-#burger-input {
-	width: 300px;
+#burger-input, #customer-input {
+	width: 200px;
 }

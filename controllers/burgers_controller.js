@@ -2,6 +2,12 @@ var exprhbs = require('express-handlebars');
 var methodOverride = require("method-override");
 var db = require('../models');
 
+// Relationships
+// db.Burger.belongsTo(db.Customer, {as: 'who_created'});  
+db.Burger.belongsTo(db.Customer, {as: 'who_devoured'});  
+// db.Burger.belongsTo(db.Burger, {as: 'who_created'}); 
+db.Customer.hasMany(db.Burger);  // this is the one used for the join for now
+
 // I pass the app in as a parameter - this means i dont need to require express above
 function router(app){
 	// this tells express what template engine to use and the default template lives (main)
@@ -15,8 +21,8 @@ function router(app){
 	// adds a new item to the database
 	app.post("/", function (req, res) {
 		// capture the name of the burger
-		// console.log(req.body.burgername);
 		var burgerName = req.body.burgername;
+		var customerName = req.body.customername;
 		// add it to the table
 	    db.Burger.create({
 	      burger_name: burgerName
@@ -65,10 +71,13 @@ function router(app){
 
 	app.get('/', function(req, res){
 
-		db.Burger.findAll({
+		db.Customer.findAll({
+			include : [{
+				model: db.Burger
+				}],
 			order: [
 		    // Will escape username and validate DESC against a list of valid direction parameters
-			    ['createdAt', 'DESC']],
+			    ['created_at', 'DESC']],
 				limit: 10
 			})
 	        .then(function(rows) {
@@ -78,6 +87,7 @@ function router(app){
 				res.render('index', { burgers: response[0], noBurgers: response[1], devoured: response[2], noDevoured: response[3]});
 	
 	        });
+
 
 	})
 
