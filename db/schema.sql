@@ -1,2 +1,2 @@
-drop database burgers_db;
-CREATE database burgers_db;
+drop database blogger;
+CREATE database blogger;

@@ -3,10 +3,11 @@ var methodOverride = require("method-override");
 var db = require('../models');
 
 // Relationships
-// db.Burger.belongsTo(db.Customer, {as: 'who_created'});  
-db.Burger.belongsTo(db.Customer, {as: 'who_devoured'});  
 // db.Burger.belongsTo(db.Burger, {as: 'who_created'}); 
-db.Customer.hasMany(db.Burger);  // this is the one used for the join for now
+// db.Customer.hasMany(db.Burger);  // this is the one used for the join for now
+
+// db.Burger.belongsTo(db.Customer, {as: 'who_created'});  
+db.Burger.belongsTo(db.Customer);  
 
 // I pass the app in as a parameter - this means i dont need to require express above
 function router(app){
@@ -22,29 +23,48 @@ function router(app){
 	app.post("/", function (req, res) {
 		// capture the name of the burger
 		var burgerName = req.body.burgername;
-		var customerName = req.body.customername;
-		// add it to the table
-	    db.Burger.create({
-	      burger_name: burgerName
-	    }).then(function(){
-	   		// reloads homepage
-			res.redirect("/");	
-	    }
-
-		)
+		var customerName = req.body.customername.toLowerCase();
+		// find the customer in the Customers table or create if it does not exist
+ 	    db.Customer.findOrCreate({
+ 	    	where: {customer_name: customerName}
+	    }).then(function(data){
+    		// console.log(data[0].dataValues.id);
+    		db.Burger.create({
+    			burger_name: burgerName,
+    			customer_id: data[0].dataValues.id
+    		}).catch(function(err){
+    			console.log(err);
+			});
+		}).then(function() {
+			res.redirect("/");
+		}).catch(function(err){
+			console.log(err);
+			res.redirect("/");
+		})
 	})
 
 	// // this put command updates an item in the database 
 	app.put("/:id", function (req, res) {
 		// id is captured from the url as a parameter
-		var burgerId = req.params.id;
+		var burgerId = req.params.id;	
+		var customerName = req.body.customer_name; 
+		// get or create an id for this customer - then update the burger table
+		db.Customer.findOrCreate({
+ 	    	where: {customer_name: customerName}
+	    }).then(function(data){
 
-		db.Burger.update(
-			{devoured: 1}, 
-			{where : { id : burgerId }}, 
-			{fields: ['devoured']}
-		).then(function() {
-				res.redirect("/");
+			db.Burger.update(
+				{devoured: 1, 
+				customer_id: data[0].id }, 
+				{where : { id : burgerId }}, 
+				{fields: ['devoured', 'customer_id']}
+			).catch(function(err){
+				console.log(err);
+			});
+		}).then(function() {
+			res.redirect("/");
+		}).catch(function(err){
+			res.redirect("/");
 		})
 	})
 
@@ -62,29 +82,21 @@ function router(app){
 
 	})
 
-	// // app.use this routes the url request to the right page
-	// // i decided to put app.use so anything other than a predefined route
-	// // will bring up the home page
-	// // i found this must be the last route in the list
-
-
-
+	// populate data on the main page
 	app.get('/', function(req, res){
 
-		db.Customer.findAll({
-			include : [{
-				model: db.Burger
-				}],
+		db.Burger.findAll({
 			order: [
-		    // Will escape username and validate DESC against a list of valid direction parameters
-			    ['created_at', 'DESC']],
-				limit: 10
+				// order by burger_name from A-Z ascending
+			    ['burger_name', 'ASC']],
+				limit: 10, 
+				include: [db.Customer]
 			})
 	        .then(function(rows) {
-
-				var response = sortBurgers(rows);
-				// send back both booleans and both arrays
-				res.render('index', { burgers: response[0], noBurgers: response[1], devoured: response[2], noDevoured: response[3]});
+	       
+				var resultsObj = sortBurgers(rows);
+				// send results in an object format
+				res.render('index', {resultsObj: resultsObj});
 	
 	        });
 
@@ -100,6 +112,7 @@ function router(app){
 		for (var i = 0; i < rows.length; i++){
 			if (rows[i].devoured === false){
 				burgerArr.push(rows[i]);
+				console.log(rows[i]);
 			} else {
 				devouredArr.push(rows[i])
 			}
@@ -115,8 +128,14 @@ function router(app){
 		if (devouredArr.length === 0){
 			noDevouredBurgers = true;
 		}
-
-		return [burgerArr, noBurgers, devouredArr, noDevouredBurgers];
+		// create object to send back to index page
+		var resultsObj = {
+			burgers: burgerArr, 
+			noBurgers: noBurgers,
+			devoured: devouredArr,
+			noDevoured: noDevouredBurgers
+		}
+		return resultsObj;
 
 	}
 }

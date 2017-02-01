@@ -22,14 +22,15 @@
 					<h2 class="text-center">Burgers Available</h2>
 					<ul>
 						<!-- uses a flag passed from the controller to check if the list is empty -->
-						{{#if noBurgers }}
+						{{#if resultsObj.noBurgers }}
 							<p class="text-center">Sorry no burgers to devour!</p>
 						{{/if}}
-					  	{{#each burgers}}
+					  	{{#each resultsObj.burgers}}
 						    <li>
 						    	<!-- updating the devoured field so this is a put action -->
 					       		<form action="/{{this.id}}?_method=PUT" method="POST">
-				       				<p class="burger-list-items"><strong># {{this.id}}</strong>  | {{this.burger_name}}</p>
+				       				<p class="burger-list-items"><strong># {{this.id}}</strong>  | {{this.burger_name}} <em><strong> created by </strong></em> {{this.Customer.customer_name}} </p>
+				       				<p class="input-form"><div class="form-input-title">Your Name:</div><input type="text" name="customer_name" id="customer-input" maxlength="32"></textarea></p>
 					        		<button class="btn btn-warning"  id="devour" type="submit">Devour it!</button>
 					        	</form>
 						    </li>
@@ -38,20 +39,23 @@
 				</div>
 			</div>
 		</div>
+
+
+
 		<div class="col-xs-12 col-md-6">
 			<div class="panel panel-devoured">
 				<div class="panel-body">
 					<h2 class="text-center">Burgers Devoured</h2>
 					<ul>		
 						<!-- uses a flag passed from the controller to check if the list is empty -->
-						{{#if noDevoured }}
+						{{#if resultsObj.noDevoured }}
 							<p class="center">No burgers have been devoured!</p>
 						{{/if}}
-						{{#each devoured}}
+						{{#each resultsObj.devoured}}
 						    <li>
 						    	<!-- removing from database so this is a delete action -->
 						        <form action="/{{this.id}}?_method=DELETE" method="POST">
-					       			<p class="burger-list-items"><strong># {{this.id}}</strong>  | {{this.burger_name}}</p>
+					       			<p class="burger-list-items"><strong># {{this.id}}</strong>  | {{this.burger_name}} <em><strong> devoured by </strong></em>  {{this.Customer.customer_name}}</p>
 					        		<button class="btn btn-danger"  id="delete" type="submit">Remove</button>
 						        </form>
 						    </li>

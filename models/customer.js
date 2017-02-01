@@ -8,7 +8,8 @@ module.exports = function(sequelize, DataTypes){
 		},
 		customer_name: {
 			type: DataTypes.STRING,
-			allowNull: false
+			allowNull: false,
+			validate: {len: [1, 33], notEmpty: true }
 		},
 		created_at: {
 			type: DataTypes.DATE,

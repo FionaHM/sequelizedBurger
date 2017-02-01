@@ -8,7 +8,8 @@ module.exports = function(sequelize, DataTypes){
 		},
 		burger_name: {
 			type: DataTypes.STRING,
-			allowNull: false
+			// allowNu÷ll: false,
+			validate: {len: [1, 33], notEmpty: true }
 		},
 		devoured: {
 			type: DataTypes.BOOLEAN,
@@ -17,12 +18,12 @@ module.exports = function(sequelize, DataTypes){
 		},
 		customer_id: {
 			type: DataTypes.INTEGER,
-			allowNull: true
+			defaultValue: -1,
 		},
-		who_devoured_id: {
-			type: DataTypes.INTEGER,
-			allowNull: false
-		},
+		// who_devoured_id: {
+		// 	type: DataTypes.INTEGER,
+		// 	allowNull: true
+		// },
 		created_at: {
 			type: DataTypes.DATE,
 		    allowNull: false,
