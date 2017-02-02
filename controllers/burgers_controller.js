@@ -4,9 +4,7 @@ var db = require('../models');
 
 // Relationships
 // db.Burger.belongsTo(db.Burger, {as: 'who_created'}); 
-// db.Customer.hasMany(db.Burger);  // this is the one used for the join for now
-
-// db.Burger.belongsTo(db.Customer, {as: 'who_created'});  
+db.Customer.hasMany(db.Burger);   
 db.Burger.belongsTo(db.Customer);  
 
 // I pass the app in as a parameter - this means i dont need to require express above
@@ -28,7 +26,6 @@ function router(app){
  	    db.Customer.findOrCreate({
  	    	where: {customer_name: customerName}
 	    }).then(function(data){
-    		// console.log(data[0].dataValues.id);
     		db.Burger.create({
     			burger_name: burgerName,
     			customer_id: data[0].dataValues.id
@@ -47,7 +44,7 @@ function router(app){
 	app.put("/:id", function (req, res) {
 		// id is captured from the url as a parameter
 		var burgerId = req.params.id;	
-		var customerName = req.body.customer_name; 
+		var customerName = req.body.customer_name.toLowerCase(); 
 		// get or create an id for this customer - then update the burger table
 		db.Customer.findOrCreate({
  	    	where: {customer_name: customerName}
@@ -84,7 +81,7 @@ function router(app){
 
 	// populate data on the main page
 	app.get('/', function(req, res){
-
+		// find all the burgers, devoured and not devoured
 		db.Burger.findAll({
 			order: [
 				// order by burger_name from A-Z ascending
@@ -93,14 +90,39 @@ function router(app){
 				include: [db.Customer]
 			})
 	        .then(function(rows) {
-	       
 				var resultsObj = sortBurgers(rows);
-				// send results in an object format
+				return resultsObj;
+	        })
+	        .then(function(resultsObj){
+	        	// if burgers have been devoured then see who has eaten the most
+	        	// if (resultsObj.noDevoured === false ){
+	        		var attributes = [ 'customer_name'];
+	        		// this works but.. it only returns the BurgerCount and not the customer_name eventhough it is an attribute
+					// db.Customer.findAll({
+					// 	attributes: ['Customer.customer_name', [db.sequelize.fn('COUNT', 'db.Burger.customer_id'), 'BurgerCount']],
+					// 	include: [{model: db.Burger, attributes : [], all: false , nested: true }],
+					// 	group: ['Customer.customer_name','Customer.id' ],
+					// 	// order: [[(db.sequelize.fn('COUNT', 'db.Burger.customer_id')),'DESC']]
+					// })
+					// so I decided to use the raw query function instead as I was unable to do what i wanted with FindAll
+					db.sequelize.query(
+						"SELECT customer.customer_name, count(burger.customer_id) AS likecount FROM Customers AS Customer, Burgers AS Burger where Customer.id = Burger.customer_id and Burger.devoured = 1 GROUP BY customer.customer_name HAVING (likecount > 0) ORDER BY likecount DESC limit 1", { type: db.sequelize.QueryTypes.SELECT
+					})
+					.then(function(rows){
+						resultsObj.glutton = rows;
+						console.log(resultsObj);
+					})
+	        	// }
+	        // Note to self: in order to exclude Burger and Customer primary keys from query need to
+	        // use  attributes : [] on the include. Otherwise aggregration wont happen.
+			// SELECT customer.customer_name, count(burger.customer_id) AS likecount FROM Customers AS Customer, Burgers AS Burger where Customer.id = Burger.customer_id and Burger.devoured = 1 GROUP BY customer.customer_name HAVING (likecount > 0) ORDER BY likecount;
+				return resultsObj;
+	        }).then(function(resultsObj){
+
+	        	console.log(resultsObj.glutton);
+	        	// send results in an object format
 				res.render('index', {resultsObj: resultsObj});
-	
-	        });
-
-
+	        })
 	})
 
 	function sortBurgers(rows){
@@ -108,11 +130,9 @@ function router(app){
 		var burgerArr = [];
 		var devouredArr = [];
 		// store this data in the appropriate array 
-		// determine
 		for (var i = 0; i < rows.length; i++){
 			if (rows[i].devoured === false){
 				burgerArr.push(rows[i]);
-				console.log(rows[i]);
 			} else {
 				devouredArr.push(rows[i])
 			}
@@ -133,7 +153,8 @@ function router(app){
 			burgers: burgerArr, 
 			noBurgers: noBurgers,
 			devoured: devouredArr,
-			noDevoured: noDevouredBurgers
+			noDevoured: noDevouredBurgers,
+			glutton: []
 		}
 		return resultsObj;
 

@@ -41,7 +41,7 @@ module.exports = function(sequelize, DataTypes){
 	})
 
 	// Syncs with DB
-	Burger.sync();
+	// Burger.sync();
 
 	return Burger;
 };

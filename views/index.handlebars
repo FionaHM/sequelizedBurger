@@ -25,6 +25,9 @@
 						{{#if resultsObj.noBurgers }}
 							<p class="text-center">Sorry no burgers to devour!</p>
 						{{/if}}
+						{{#if resultsObj.burgers }}
+							<div class="row"><p>Please enter your name to devour a burger of your choice!</p></div>
+						{{/if}}
 					  	{{#each resultsObj.burgers}}
 						    <li>
 						    	<!-- updating the devoured field so this is a put action -->
@@ -66,6 +69,29 @@
 		</div>
 	</div>
 	<!-- end of display burgers -->
+	
+		<div class="col-xs-12 col-md-12">
+			<div class="panel panel-glutton">
+				<div class="panel-body">
+					<div class="md-col-3"></div>
+					<div class="md-col-6">
+					    {{#if resultsObj.noDevoured }}
+					    	<h2 class="text-center">Current Burger Eating Champion</h2>
+					    	<p class="text-center">Do you want your name here as the burger eating champion?</p>
+					    {{/if}}
+						{{#if resultsObj.glutton }}
+							<p class="text-center"><h2 class="text-center">Who devoured all the burgers?</h2></p>
+						{{/if}}
+						{{#each resultsObj.glutton}}
+							<p class="burger-champ text-center"><strong>{{this.customer_name}}</strong> devoured the most Burgers. </p>
+							<p class="burger-champ text-center"> Total: {{this.likecount}} Burger(s)!<em>
+						{{/each}}
+					</div>
+					<div class="md-col-3"></div>
+				</div>
+			</div>
+		</div>
+
 	<!-- add new burger -->
 	<div class="row text-center">
 		<div class="col-md-3"></div>

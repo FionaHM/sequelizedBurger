@@ -16,15 +16,12 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
- 
-
 // parse an HTML body into a string 
 app.use(bodyParser.text({ type: 'text/html' }));
 
-router(app);
+db.sequelize.sync({force: false}).then(function(){
+	router(app);
 
-
-db.sequelize.sync().then(function(){
 	app.listen(PORT, function(){
 		console.log("listening on port " + PORT);
 	});

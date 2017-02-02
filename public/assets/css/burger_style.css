@@ -12,6 +12,11 @@ p {
 input {
 	margin: 10px;
 }
+.panel-glutton { 
+	display: block;
+	margin: auto 0 0 0px;
+	background-color: #e79623;
+ }
 .btn-warning {
     color: #fff;
     background-color: #399B52;
@@ -35,7 +40,10 @@ input {
 	margin: auto;
 	padding-right: 10%;
 	min-width: 75%;
-
+}
+.burger-champ {
+	margin: auto;
+	display: block;
 }
 .input-form {
 	display: block;
