@@ -16,26 +16,19 @@ module.exports = function(sequelize, DataTypes){
 			allowNull: false,
 			defaultValue: 0
 		},
-		customer_id: {
-			type: DataTypes.INTEGER,
-			defaultValue: -1,
-		},
-		// who_devoured_id: {
-		// 	type: DataTypes.INTEGER,
-		// 	allowNull: true
-		// },
-		created_at: {
-			type: DataTypes.DATE,
-		    allowNull: false,
-		    defaultValue: DataTypes.NOW
-		},
-		updated_at: {
-		    allowNull: false,
-		    type: DataTypes.DATE,
-		    defaultValue: DataTypes.NOW
-		}
 	},{  // use snake case instead of camel case so foreign keys of format modelname_pkid e.g. burger_id or customer_id
-    	underscored: true
+    	underscored: true,
+    	classMethods: {
+        associate: function(models) {
+       		// many to one relationship Burgers to Customer 
+          	// An Customer (foreignKey) is required or a Burger can't be added
+        	Burger.belongsTo(models.Customer, {
+	            foreignKey: {
+	              allowNull: false
+	            }
+          	});
+        }
+      }
   	},{
   		timestamps: false
 	})

@@ -10,19 +10,18 @@ module.exports = function(sequelize, DataTypes){
 			type: DataTypes.STRING,
 			allowNull: false,
 			validate: {len: [1, 33], notEmpty: true }
-		},
-		created_at: {
-			type: DataTypes.DATE,
-		    allowNull: false,
-		    defaultValue: DataTypes.NOW
-		},
-		updated_at: {
-		    allowNull: false,
-		    type: DataTypes.DATE,
-		    defaultValue: DataTypes.NOW
 		}
 	},{  // use snake case instead of camel case so foreign keys of format modelname_pkid e.g. burger_id or customer_id
-    	underscored: true
+    	underscored: true,
+    	classMethods: {
+        associate: function(models) {
+           // One to many relationship
+			// When a Customer is deleted, also delete any associated Burgers
+			Customer.hasMany(models.Burger, {
+				onDelete: "cascade"
+			});
+        }
+      }
   	},{
   		timestamps: false
 	} )

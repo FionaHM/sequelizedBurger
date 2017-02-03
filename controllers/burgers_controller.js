@@ -5,9 +5,8 @@ var db = require('../models');
 
 // Relationships
 // one to many 
-db.Customer.hasMany(db.Burger); 
-// many to one  
-db.Burger.belongsTo(db.Customer);  
+// db.Customer.hasMany(db.Burger); 
+  
 
 // I pass the app in as a parameter - this means i dont need to require express above
 function router(app){
@@ -28,6 +27,7 @@ function router(app){
  	    db.Customer.findOrCreate({
  	    	where: {customer_name: customerName}
 	    }).then(function(data){
+	    	// add the burger data for the current customer
     		db.Burger.create({
     			burger_name: burgerName,
     			customer_id: data[0].dataValues.id
@@ -42,16 +42,17 @@ function router(app){
 		})
 	})
 
-	// // this put command updates an item in the database 
+	// // this put command updates customer in the database based on id field
 	app.put("/:id", function (req, res) {
 		// id is captured from the url as a parameter
 		var burgerId = req.params.id;	
+		// customer name captured from the request body
 		var customerName = req.body.customer_name.toUpperCase(); 
 		// get or create an id for this customer - then update the burger table
 		db.Customer.findOrCreate({
  	    	where: {customer_name: customerName}
 	    }).then(function(data){
-
+	    	// use captured id to update the Burger table
 			db.Burger.update(
 				{devoured: 1, 
 				customer_id: data[0].id }, 
@@ -67,11 +68,11 @@ function router(app){
 		})
 	})
 
-	// // this delete command removes an item from the database 
+	// // this delete command removes an item from the database table Burger based on id
 	app.delete("/:id", function (req, res) {
 		// id is captured from the url as a parameter
 		var burgerId = req.params.id;
-
+		// this is the sequelize delet command
 		db.Burger.destroy(
 			{where : { id : burgerId }}
 		).then(function(){
@@ -97,11 +98,11 @@ function router(app){
 	        })
 	        .then(function(resultsObj){
 	        	// call function to get count of burgers devoured
+	        	// this function returns a promise
 				glutton().then(function(rows){
 					resultsObj.glutton = rows
 				}).then(function(){
 					// send results in an object format
-					console.log(resultsObj);
 					res.render('index', {resultsObj: resultsObj});
 				})
 	        })
@@ -110,13 +111,14 @@ function router(app){
 	function glutton(){
 		return new Promise(function(resolve, reject){
 			// if burgers have been devoured then see who has eaten the most
-    		// this works but.. it only returns the BurgerCount and not the customer_name eventhough it is an attribute
+    		// the sequelize command works but it only returns the BurgerCount and not the customer_name eventhough it is an attribute
+			// in the query
 			// db.Customer.findAll({
 			// 	attributes: ['Customer.customer_name', [db.sequelize.fn('COUNT', 'db.Burger.customer_id'), 'BurgerCount']],
 			// 	include: [{model: db.Burger, attributes : [], all: false , nested: true }],
 			// 	group: ['Customer.customer_name','Customer.id' ],
 			// 	// order: [[(db.sequelize.fn('COUNT', 'db.Burger.customer_id')),'DESC']]
-			// so I decided to use the raw query function instead as I was unable to do what i wanted with FindAll
+			// SO I decided to use the raw query function instead as I was unable to do what i wanted with FindAll
 			db.sequelize.query(
 				"SELECT Customer.customer_name, count(Burger.customer_id) AS likecount FROM Customers AS Customer, Burgers AS Burger where Customer.id = Burger.customer_id and Burger.devoured = 1 GROUP BY Customer.customer_name HAVING (likecount > 0) ORDER BY likecount DESC limit 1", { type: db.sequelize.QueryTypes.SELECT
 			})
@@ -143,13 +145,13 @@ function router(app){
 				devouredArr.push(rows[i])
 			}
 		}
-		// create 2 booleans to let the client know if no data available
-		// one for the burgers list
+		// create 2 booleans to indicate the status of the data
+		// one for the burgers list - false if no burgers
 		var noBurgers = false;
 		if (burgerArr.length === 0){
 			noBurgers = true;
 		}
-		// one for the devoured list
+		// one for the devoured list - false if nothing devoured
 		var noDevouredBurgers = false;
 		if (devouredArr.length === 0){
 			noDevouredBurgers = true;

@@ -4,7 +4,8 @@ https://github.com/FionaHM/sequelizedBurger
 
 ## About this application
 
-This application allows a user to enter the name of a burger and then devour it. The user can also delete a devoured burger.  Please not that the total number of displayed burgers is limited to 10. Burgers are added to the devoured and burgers list with the newest on top.  The burger ids will not therefore be sequesential as the list is based on timestamp desc.
+This application allows a user to enter the name of a burger and then devour it. The user can also delete a devoured burger.  Please note that the total number of displayed burgers is limited to 10. Burgers are added to the devoured and ordered based on the customer's name, alphabetial order.
+To add a burger a customer enters their name and the burger they wish to create. To devour a burger a customer enters their name and selects the devour button. 
 
 ## Usage
 The application is started on the commandline as follows:
@@ -44,7 +45,9 @@ The path "/:id" is routed to a delete method in this controller file. This then 
 
 
 * GET:
-A get request is set to serve the base url '/'.  The homepage is populated with the burger data from the database by using sequelize ORM to query the burgers table in the database.  The results of this call are redendered to the page used in the index.handlebars view.
+A get request is set to serve the base url '/'.  The homepage is populated with the burger data from the database by using sequelize ORM to query the burgers table in the database.  The results of this call are redendered to the page used in the index.handlebars view.  
+
+This route also displays the customer that has eaten the most burgers - it only selects one - even when there are customers many with the same number devoured.
 
 
 ##   Data: 
@@ -55,17 +58,13 @@ This file contains connection information for the mysql database.
 
 ###  models directory
 
-This directory contains the data models. In this case it contains a burger.js file that contains the schema for the burgers table.
+This directory contains the data models. In this case it contains a burger.js file that contains the schema for the burgers table and a customer.js file that contains the schema for the customers table.
 
 It also contains the index.js file that amoung other things, sets the database environment and exports Sequelize library and the connection to the database.
 
 ###  schema.sql
 
 * This file should be run before the server is started to create the underlying database schema. In this case it only contains a command to create the database.
-
-
- ![Image of db_creation.png]
-(readme_images/db_creation.png)
 
 ##   Views: 
 
@@ -112,5 +111,4 @@ A node.js driver for mysql.
 
 
 #  License
-FriendFinder is released under the MIT license.
->>>>>>> initial commit
+sequelizedBurger is released under the MIT license.
