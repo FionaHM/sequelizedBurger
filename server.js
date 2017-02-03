@@ -19,7 +19,7 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 // parse an HTML body into a string 
 app.use(bodyParser.text({ type: 'text/html' }));
 
-db.sequelize.sync({force: false}).then(function(){
+db.sequelize.sync({force: true}).then(function(){
 	router(app);
 
 	app.listen(PORT, function(){
