@@ -118,7 +118,7 @@ function router(app){
 			// 	// order: [[(db.sequelize.fn('COUNT', 'db.Burger.customer_id')),'DESC']]
 			// so I decided to use the raw query function instead as I was unable to do what i wanted with FindAll
 			db.sequelize.query(
-				"SELECT customer.customer_name, count(burger.customer_id) AS likecount FROM Customers AS Customer, Burgers AS Burger where Customer.id = Burger.customer_id and Burger.devoured = 1 GROUP BY customer.customer_name HAVING (likecount > 0) ORDER BY likecount DESC limit 1", { type: db.sequelize.QueryTypes.SELECT
+				"SELECT Customer.customer_name, count(Burger.customer_id) AS likecount FROM Customers AS Customer, Burgers AS Burger where Customer.id = Burger.customer_id and Burger.devoured = 1 GROUP BY Customer.customer_name HAVING (likecount > 0) ORDER BY likecount DESC limit 1", { type: db.sequelize.QueryTypes.SELECT
 			})
 			.then(function(rows){
 				resolve(rows);
