@@ -79,10 +79,8 @@
 					    	<h2 class="text-center">Current Burger Eating Champion</h2>
 					    	<p class="text-center">Do you want your name here as the burger eating champion?</p>
 					    {{/if}}
-						{{#if resultsObj.glutton }}
+					    {{#each resultsObj.glutton}}
 							<p class="text-center"><h2 class="text-center">Who devoured all the burgers?</h2></p>
-						{{/if}}
-						{{#each resultsObj.glutton}}
 							<p class="burger-champ text-center"><strong>{{this.customer_name}}</strong> devoured the most Burgers. </p>
 							<p class="burger-champ text-center"> Total: {{this.likecount}} Burger(s)!<em>
 						{{/each}}
